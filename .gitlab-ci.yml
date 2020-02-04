@@ -1,0 +1,17 @@
+image: python:3
+
+services:
+  - postgres:latest
+
+variables:
+  POSTGRES_DB: worldcup
+
+before_script:
+  - python -V
+  - pip install -r requirements.txt
+
+test:
+  variables:
+    DATABASE_URL: "postgresql://username:password@db:5432/$POSTGRES_DB"
+  script:
+    - python manage.py test
