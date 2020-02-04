@@ -1,0 +1,20 @@
+[run]
+branch = True
+include =
+        ./*
+omit =
+        *tests*
+        *__init__*
+        *migrations*
+        *urls*
+        *asgi*
+        *settings*
+        *wsgi*
+        *manage*
+        *apps*
+[report]
+exclude_lines = 
+        pragma: no cover
+        if __name__ == .__main__.:
+[html]
+directory = htmlcov
