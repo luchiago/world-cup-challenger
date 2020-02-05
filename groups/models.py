@@ -4,7 +4,7 @@ from tournaments.models import Tournament
 
 
 class Group(models.Model):
-    letter = models.CharField(max_length=1)
+    letter = models.CharField(max_length=1, null=False)
     tournament = models.ForeignKey(
         Tournament,
         related_name='groups',
