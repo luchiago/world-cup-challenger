@@ -39,10 +39,10 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'teams',
-    'groups',
     'tournaments',
+    'groups',
     'matches',
+    'teams',
 ]
 
 MIDDLEWARE = [
@@ -84,8 +84,8 @@ DATABASES = {
         'NAME': os.environ['POSTGRES_DB'],
         'USER': os.environ['POSTGRES_USER'],
         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-        'HOST': 'localhost',
-        'PORT': 5432,
+        'HOST': os.environ['POSTGRES_HOST'],
+        'PORT': os.environ['POSTGRES_PORT'],
     }
 }
 
