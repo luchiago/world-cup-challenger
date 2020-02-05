@@ -38,6 +38,6 @@ class TeamModelTestCase(TestCase):
             team_without_name.save()
 
     def test_model_cannot_create_team_without_group(self):
-        team_without_group = Team()
+        team_without_group = Team(name='Japan')
         with self.assertRaises(IntegrityError):
             team_without_group.save()

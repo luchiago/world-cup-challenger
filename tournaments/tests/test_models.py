@@ -3,12 +3,12 @@ from django.test import TestCase
 from ..models import Tournament
 
 
-class TeamModelTestCase(TestCase):
+class TournamentModelTestCase(TestCase):
 
     def setUp(self):
         self.tournament = Tournament()
 
-    def test_model_can_create_team(self):
+    def test_model_can_create_tournament(self):
         old_count = Tournament.objects.count()
         self.tournament.save()
         new_count = Tournament.objects.count()
