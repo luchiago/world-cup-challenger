@@ -7,6 +7,8 @@ variables:
   POSTGRES_PASSWORD: ''
   POSTGRES_USER: postgres
   POSTGRES_DB: worldcup
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
 
 before_script:
   - python -V
