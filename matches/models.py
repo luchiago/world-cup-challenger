@@ -29,11 +29,7 @@ class Match(models.Model):
     away_team_goals = models.IntegerField(default=0)
     home_team_goals = models.IntegerField(default=0)
     played = models.BooleanField(default=False)
-    phase = models.CharField(
-        max_length=25,
-        default=None,
-        choices=PHASE_CHOICES,
-        null=True)
+    phase = models.IntegerField(choices=PHASE_CHOICES, default=None, null=True)
     tournament = models.ForeignKey(
         Tournament,
         related_name='matches',
