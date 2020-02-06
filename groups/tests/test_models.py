@@ -1,8 +1,9 @@
-from django.test import TestCase
 from django.db.utils import IntegrityError
+from django.test import TestCase
+
+from tournaments.models import Tournament
 
 from ..models import Group
-from tournaments.models import Tournament
 
 
 class GroupModelTestCase(TestCase):
@@ -25,10 +26,15 @@ class GroupModelTestCase(TestCase):
 
     def test_model_cannot_create_group_without_letter(self):
         group_without_letter = Group()
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(NameError):
             group_without_letter.save()
 
     def test_model_cannot_create_group_without_tournament(self):
         self.group.tournament_id = None
         with self.assertRaises(IntegrityError):
             self.group.save()
+
+    def test_model_cannot_create_group_with_wrong_letter(self):
+        self.group.letter = 'F'
+        with self.assertRaises(NameError):
+            self.group.save('Wrong group letter name')
