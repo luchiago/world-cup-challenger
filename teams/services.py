@@ -39,7 +39,8 @@ class CreateTeamService:
 
     def perform(self):
         last_tournament = Tournament.objects.last()
-        if last_tournament and last_tournament.finished:
-            return self.create_teams()
-        else:
+        if last_tournament and not last_tournament.finished:
             raise Exception('The last tournament did not finished')
+        else:
+            tournament = Tournament()
+            return self.create_teams(), tournament

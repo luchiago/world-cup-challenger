@@ -4,7 +4,6 @@ from rest_framework.views import APIView
 
 from groups.services import CreateGroupService
 from tournaments.models import Tournament
-from tournaments.serializer import TournamentSerializer
 
 from .services import CreateTeamService
 
@@ -12,14 +11,17 @@ from .services import CreateTeamService
 class TeamList(APIView):
     def post(self, request, format=None):
         try:
-            tournament = Tournament()
-            teams = CreateTeamService(request).perform()
+            teams, tournament = CreateTeamService(request).perform()
             CreateGroupService(teams, tournament).perform()
             tournament.phase = 'First Phase'
             tournament.save()
-            serialized = TournamentSerializer(tournament)
+            data = {
+                'message': 'Tournament created and ready for First Phase',
+                'id': tournament.id,
+                'phase': tournament.phase,
+            }
             return Response(
-                data=serialized.data,
+                data=data,
                 status=status.HTTP_201_CREATED)
         except Exception as e:
             data = {'message': str(e)}
