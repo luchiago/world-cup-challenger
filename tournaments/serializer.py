@@ -18,7 +18,7 @@ class TournamentCompleteSerializer(serializers.ModelSerializer):
 
 class TournamentSerializer(serializers.ModelSerializer):
 
-    phase = serializers.CharField(source='get_match_display')
+    phase = serializers.CharField(source='get_phase_display')
 
     class Meta:
         model = Tournament

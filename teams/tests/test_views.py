@@ -39,8 +39,8 @@ class TeamViewTest(TestCase):
         self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.response.data['message'], sucess_message)
         self.assertEqual(self.response.data['id'], self.created_tournament.id)
-        self.assertEqual(self.response.data['phase'], Tournament.PHASE_CHOICES[int(
-            self.created_tournament.phase)][1])
+        self.assertEqual(self.response.data['phase'], Tournament.PHASE_CHOICES[
+            self.created_tournament.phase][1])
 
     def test_can_create_tournament_with_correct_names(self):
         expected_amount_teams = 12

@@ -9,6 +9,7 @@ class MatchSerializer(serializers.ModelSerializer):
 
     away_team = TeamSerializer(many=False)
     home_team = TeamSerializer(many=False)
+    phase = serializers.CharField(source='get_phase_display')
 
     class Meta:
         model = Match

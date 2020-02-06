@@ -13,7 +13,7 @@ from ..models import Match
 class MatchModelTestCase(TestCase):
 
     def setUp(self):
-        self.phase = 'first_phase'
+        self.phase = Tournament.FIRST_PHASE
         self.group_letter = 'A'
         self.team_a_name = 'Brazil'
         self.team_b_name = 'Germany'
