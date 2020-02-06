@@ -23,4 +23,4 @@ class TournamentModelTestCase(TestCase):
         self.tournament.phase = phase
         self.tournament.save()
         created_tournament = Tournament.objects.last()
-        self.assertEquals(int(created_tournament.phase), phase)
+        self.assertEquals(created_tournament.phase, phase)
