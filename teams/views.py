@@ -13,12 +13,12 @@ class TeamList(APIView):
         try:
             teams, tournament = CreateTeamService(request).perform()
             CreateGroupService(teams, tournament).perform()
-            tournament.phase = 'First Phase'
+            tournament.phase = Tournament.FIRST_PHASE
             tournament.save()
             data = {
                 'message': 'Tournament created and ready for First Phase',
                 'id': tournament.id,
-                'phase': tournament.phase,
+                'phase': Tournament.PHASE_CHOICES[tournament.phase][1],
             }
             return Response(
                 data=data,
