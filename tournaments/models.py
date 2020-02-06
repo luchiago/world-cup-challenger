@@ -15,9 +15,5 @@ class Tournament(models.Model):
         (FINAL, 'Final')
     ]
 
-    phase = models.CharField(
-        max_length=25,
-        default=None,
-        choices=PHASE_CHOICES,
-        null=True)
+    phase = models.IntegerField(choices=PHASE_CHOICES, default=None, null=True)
     finished = models.BooleanField(null=False, default=False)

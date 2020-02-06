@@ -6,7 +6,7 @@ from matches.serializer import MatchSerializer
 from .models import Tournament
 
 
-class TournamentSerializer(serializers.ModelSerializer):
+class TournamentCompleteSerializer(serializers.ModelSerializer):
 
     groups = GroupSerializer(many=True)
     matches = MatchSerializer(many=True)
@@ -14,3 +14,13 @@ class TournamentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tournament
         fields = ['id', 'phase', 'finished', 'groups', 'matches']
+
+
+class TournamentSerializer(serializers.ModelSerializer):
+
+    phase = serializers.CharField(source='get_match_display')
+
+    class Meta:
+        model = Tournament
+        fields = ['id', 'phase', 'finished']
+
