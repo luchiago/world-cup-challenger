@@ -51,6 +51,7 @@ class GroupModelTestCase(TestCase):
         self.assertEquals(created_match.away_team_goals, self.team_a_goals)
         self.assertEquals(created_match.home_team.id, self.team_b.id)
         self.assertEquals(created_match.home_team_goals, self.team_b_goals)
+        self.assertFalse(created_match.played)
 
     def test_model_cannot_create_match_without_teams(self):
         match_without_teams = Match()
