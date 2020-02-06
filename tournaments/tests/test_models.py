@@ -19,7 +19,7 @@ class TournamentModelTestCase(TestCase):
         self.assertIsNone(created_tournament.phase)
 
     def test_model_can_change_tournament_phase(self):
-        phase = 'first_phase'
+        phase = Tournament.FIRST_PHASE
         self.tournament.phase = phase
         self.tournament.save()
         created_tournament = Tournament.objects.last()
