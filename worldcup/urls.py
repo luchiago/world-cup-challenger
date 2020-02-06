@@ -6,5 +6,6 @@ router = routers.DefaultRouter()
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^teams/', include(('teams.urls', 'teams'), namespace='teams')),
+    url(r'^tournaments/', include(('tournaments.urls', 'tournaments'), namespace='tournaments')),
 
 ]

@@ -23,4 +23,3 @@ class TournamentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tournament
         fields = ['id', 'phase', 'finished']
-
