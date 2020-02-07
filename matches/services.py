@@ -1,6 +1,7 @@
 from itertools import combinations
 
 from groups.models import Group
+from teams.models import Team
 from tournaments.models import Tournament
 
 from .models import Match
@@ -74,3 +75,89 @@ class CreateMatchService:
             self.create_group_matches(list_of_teams)
         else:
             self.create_match(list_of_teams)
+
+
+class MatchResultsService:
+
+    def __init__(self, request):
+        self.results = request.data
+        self.tournament = Tournament.objects.last()
+
+    def verify_matches(self):
+        for received_match in self.results:
+            match = Match.objects.filter(
+                pk=received_match['id'],
+                tournament__phase=self.tournament.phase,
+                played=False)
+            if not match:
+                raise Exception('Invalid Matches')
+
+    def can_advance_next_phase(self):
+        has_not_played_matches = Match.objects.filter(
+            tournament__phase=self.tournament.phase,
+            played=False)
+        if not has_not_played_matches:
+            if self.tournament.phase != Tournament.FINAL:
+                self.tournament.phase += 1
+                self.tournament.save()
+            else:
+                raise Exception('The tournament has finished')
+
+    def check_match_winner(self, away_team, home_team, result):
+        if result['away_goals'] > result['home_goals']:
+            away_team.points += 3
+        if result['away_goals'] < result['home_goals']:
+            home_team.points += 3
+        if result['away_goals'] == result['home_goals']:
+            if self.tournament.phase != Tournament.FIRST_PHASE:
+                raise Exception('Draw is not allowed')
+            away_team.points += 1
+            home_team.points += 1
+        home_team.save()
+        away_team.save()
+
+    def update_team_position_in_group(self, team):
+        group = Group.objects.get(pk=team.group.id)
+        list_group_teams = list(
+            group.teams.all().order_by(
+                '-points', '-goals'))
+        for team in list_group_teams:
+            new_position = list_group_teams.index(team) + 1
+            team.position = new_position
+            team.save()
+
+    def update_team_position_in_tournament(self, team):
+        list_tournament_teams = list(
+            Team.objects.filter(
+                group__tournament__pk=self.tournament.pk).order_by(
+                '-points', '-goals'))
+        for team in list_tournament_teams:
+            new_position = list_tournament_teams.index(team) + 1
+            team.position = new_position
+            team.save()
+
+    def put_match_results(self):
+        for received_match in self.results:
+            match = Match.objects.get(pk=received_match['id'])
+            match.away_team_goals = received_match['away_goals']
+            match.home_team_goals = received_match['home_goals']
+            match.away_team.goals += received_match['away_goals']
+            match.home_team.goals += received_match['home_goals']
+            match.played = True
+            match.save()
+            self.check_match_winner(
+                match.away_team,
+                match.home_team,
+                received_match)
+            if self.tournament.phase == Tournament.FIRST_PHASE:
+                self.update_team_position_in_group(match.away_team)
+                self.update_team_position_in_group(match.home_team)
+            else:
+                self.update_team_position_in_tournament(match.away_team)
+                self.update_team_position_in_tournament(match.home_team)
+
+        self.can_advance_next_phase()
+
+    def perform(self):
+        self.verify_matches()
+        return self.put_match_results()
