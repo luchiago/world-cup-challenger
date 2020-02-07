@@ -109,3 +109,18 @@ class TeamViewTest(TestCase):
         expected_error_message = 'Invalid teams'
         self.assertEquals(response.data['message'], expected_error_message)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_can_create_another_tournament_when_last_finish(self):
+        old_count = Tournament.objects.count()
+        last_tournament = Tournament.objects.last()
+        last_tournament.finished = True
+        last_tournament.save()
+        response = self.client.post('/teams/',
+                                         data=json.dumps(self.teams_names),
+                                         content_type='application/json'
+                                        )
+        new_count = Tournament.objects.count()
+        new_tournament = Tournament.objects.last()
+        self.assertNotEquals(old_count, new_count)
+        self.assertEquals(response.status_code, status.HTTP_201_CREATED)
+        self.assertEquals(new_tournament.phase, Tournament.FIRST_PHASE)
