@@ -116,9 +116,9 @@ class TeamViewTest(TestCase):
         last_tournament.finished = True
         last_tournament.save()
         response = self.client.post('/teams/',
-                                         data=json.dumps(self.teams_names),
-                                         content_type='application/json'
-                                        )
+                                    data=json.dumps(self.teams_names),
+                                    content_type='application/json'
+                                    )
         new_count = Tournament.objects.count()
         new_tournament = Tournament.objects.last()
         self.assertNotEquals(old_count, new_count)
