@@ -116,8 +116,8 @@ class CreateMatchService:
 
 class MatchResultsService:
 
-    def __init__(self, request):
-        self.results = request.data
+    def __init__(self, list_of_results):
+        self.results = list_of_results
         self.tournament = Tournament.objects.last()
 
     def verify_matches(self):

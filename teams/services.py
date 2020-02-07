@@ -24,8 +24,8 @@ class VerifyTeamService:
 
 
 class CreateTeamService:
-    def __init__(self, request):
-        self.data = request.data
+    def __init__(self, teams):
+        self.data = teams
 
     def create_teams(self):
         if VerifyTeamService(self.data).is_valid():
