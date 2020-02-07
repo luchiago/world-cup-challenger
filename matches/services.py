@@ -14,26 +14,30 @@ class MatchService:
     def __init__(self, tournament):
         self.tournament = tournament
 
-    def list_played_matches(self):
+    def list_played_matches(self, phase):
         played_matches = Match.objects.filter(
             tournament__pk=self.tournament.id,
             played=True,
-            phase=self.tournament.phase)
+            phase=phase)
         serialized = MatchSerializer(played_matches, many=True)
         return serialized.data
 
-    def list_not_played_matches(self):
+    def list_not_played_matches(self, phase):
         not_played_matches = Match.objects.filter(
             tournament__pk=self.tournament.id,
             played=False,
-            phase=self.tournament.phase)
+            phase=phase)
         serialized = MatchSerializer(not_played_matches, many=True)
         return serialized.data
 
     def list_phase_matches(self):
-        matches = {}
-        matches['next_matches'] = self.list_not_played_matches()
-        matches['played_matches'] = self.list_played_matches()
+        matches = []
+        for phase in Tournament.PHASE_CHOICES:
+            phase_match = {}
+            phase_match['phase'] = phase[1]
+            phase_match['next_matches'] = self.list_not_played_matches(phase[0])
+            phase_match['played_matches'] = self.list_played_matches(phase[0])
+            matches.append(phase_match)
         return matches
 
     def perform(self):
