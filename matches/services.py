@@ -1,5 +1,7 @@
 from itertools import combinations
 
+from django.db.models import Q
+
 from groups.models import Group
 from teams.models import Team
 from tournaments.models import Tournament
@@ -59,6 +61,41 @@ class CreateMatchService:
             return created_match
         else:
             raise Exception('Wrong number of Teams')
+
+    def get_match_winners_list(self, phase):
+        last_matches = list(Match.objects.filter(phase=phase).order_by('pk'))
+        list_winners = [match.winner for match in last_matches]
+        return list_winners
+
+    def permute_teams(self, first_teams, second_teams):
+        self.create_match(first_teams[0], second_teams[1])
+        self.create_match(first_teams[1], second_teams[0])
+
+    def create_second_phase_matches(self):
+        groups = self.tournament.groups.all()
+        first_position_list = []
+        second_position_list = []
+        for group in groups:
+            teams = list(group.teams.all().order_by('position'))
+            first_position_list.append(teams[0])
+            second_position_list.append(teams[1])
+        self.permute_teams(first_position_list[2:], second_position_list[2:])
+        self.permute_teams(first_position_list[:2], second_position_list[:2])
+
+    def create_semi_final_matches(self):
+        list_winners = self.get_match_winners_list(Tournament.SECOND_PHASE)
+        self.create_match(list_winners[:2])
+        self.create_match(list_winners[2:])
+
+    def create_final_matches(self):
+        list_winners = self.get_match_winners_list(Tournament.SEMI_FINAL)
+        self.create_match(list_winners)
+        self.create_third_fourth_places_matches()
+
+    def create_third_fourth_places_matches(self):
+        losers_of_semi_finals = list(
+            Team.objects.filter(Q(position=3) | Q(position=4)))
+        self.create_match(losers_of_semi_finals)
 
     def create_group_matches(self, list_of_teams):
         allowed_amount_teams = 3
