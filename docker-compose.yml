@@ -3,13 +3,21 @@ version: '3'
 services:
   db:
     image: postgres
-    environment: 
-      - POSTGRES_USER=username
+    environment:
       - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
       - POSTGRES_DB=worldcup
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
     volumes:
       - pgdata:/var/lib/posgresql/data
   web:
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=worldcup
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
     build: .
     command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:

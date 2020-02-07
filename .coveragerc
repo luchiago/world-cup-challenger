@@ -6,12 +6,12 @@ omit =
         *tests*
         *__init__*
         *migrations*
-        *urls*
         *asgi*
         *settings*
         *wsgi*
         *manage*
         *apps*
+	*serializer*
 [report]
 exclude_lines = 
         pragma: no cover
