@@ -137,9 +137,12 @@ class MatchResultsService:
             if self.tournament.phase != Tournament.FINAL:
                 self.tournament.phase += 1
                 self.create_next_phase_matches(self.tournament)
+            else:
+                self.tournament.finished = True
             self.tournament.save()
 
     def create_next_phase_matches(self, tournament):
+        self.update_team_position_in_tournament()
         creator = CreateMatchService(tournament)
         if tournament.phase == Tournament.SECOND_PHASE:
             creator.create_second_phase_matches()
@@ -174,7 +177,7 @@ class MatchResultsService:
             team.position = new_position
             team.save()
 
-    def update_team_position_in_tournament(self, team):
+    def update_team_position_in_tournament(self):
         list_tournament_teams = list(
             Team.objects.filter(
                 group__tournament__pk=self.tournament.pk).order_by(
@@ -199,10 +202,8 @@ class MatchResultsService:
                 received_match)
             if self.tournament.phase == Tournament.FIRST_PHASE:
                 self.update_team_position_in_group(match.away_team)
-                self.update_team_position_in_group(match.home_team)
             else:
-                self.update_team_position_in_tournament(match.away_team)
-                self.update_team_position_in_tournament(match.home_team)
+                self.update_team_position_in_tournament()
 
         self.can_advance_next_phase()
 
