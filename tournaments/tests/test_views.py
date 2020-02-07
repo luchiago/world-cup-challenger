@@ -57,14 +57,20 @@ class TournamentViewTest(TestCase):
             for team in group['teams']:
                 self.assertIn(team['name'], self.list_of_teams)
 
-    def test_can_read_list_of_matches_of_first_phase(self):
+    def test_can_read_list_of_matches(self):
         self.response = self.client.get('/tournaments/matches/')
-        expected_amount_next_matches = 12
-        expected_amount_played_matches = 0
+        expected_amount = 12
+        expected_empty = 0
+        first_phase = 'First Phase'
+        second_phase = 'Second Phase'
         self.assertEquals(
-            len(self.response.data['next_matches']), expected_amount_next_matches)
+            len(self.response.data[0]['next_matches']), expected_amount)
         self.assertEquals(
-            len(self.response.data['played_matches']), expected_amount_played_matches)
+            len(self.response.data[0]['played_matches']), expected_empty)
+        self.assertEquals(
+            len(self.response.data[1]['next_matches']), expected_empty)
+        self.assertEquals(
+            len(self.response.data[1]['played_matches']), expected_empty)
 
     def test_can_read_list_of_teams_of_other_phase(self):
         self.created_tournament.phase = Tournament.SECOND_PHASE
