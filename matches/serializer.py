@@ -10,6 +10,7 @@ class MatchSerializer(serializers.ModelSerializer):
     away_team = TeamSerializer(many=False)
     home_team = TeamSerializer(many=False)
     phase = serializers.CharField(source='get_phase_display')
+    winner = TeamSerializer(many=False)
 
     class Meta:
         model = Match
@@ -20,5 +21,6 @@ class MatchSerializer(serializers.ModelSerializer):
             'away_team_goals',
             'home_team_goals',
             'played',
-            'phase'
+            'phase',
+            'winner',
         ]
