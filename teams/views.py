@@ -11,7 +11,7 @@ from .services import CreateTeamService
 class TeamList(APIView):
     def post(self, request, format=None):
         try:
-            teams, tournament = CreateTeamService(request).perform()
+            teams, tournament = CreateTeamService(request.data).perform()
             CreateGroupService(teams, tournament).perform()
             tournament.phase = Tournament.FIRST_PHASE
             tournament.save()

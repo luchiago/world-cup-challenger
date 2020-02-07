@@ -9,7 +9,7 @@ class MatchResults(APIView):
 
     def patch(self, request, format=None):
         try:
-            MatchResultsService(request).perform()
+            MatchResultsService(request.data).perform()
             return Response(status=status.HTTP_200_OK)
         except Exception as e:
             data = {'message': str(e)}
