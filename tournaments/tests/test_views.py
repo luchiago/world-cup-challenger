@@ -3,6 +3,10 @@ import json
 from django.test import Client, TestCase
 from rest_framework import status
 
+from groups.models import Group
+from matches.tests.helper import MatchTestHelper
+from teams.models import Team
+
 from ..models import Tournament
 
 
@@ -85,3 +89,66 @@ class TournamentViewTest(TestCase):
         self.assertEquals(
             tournament_matches_controller_response.status_code,
             status.HTTP_404_NOT_FOUND)
+
+
+class RankingViewTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.results_helper = MatchTestHelper()
+
+    def test_first_ranking_all_teams_in_first_position(self):
+        self.results_helper.generate_first_phase()
+        response = self.client.get('/tournaments/rankings/')
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        list_of_groups = response.data
+        for group in list_of_groups:
+            group_from_db = Group.objects.get(pk=group['id'])
+            self.assertEquals(group_from_db.letter, group['letter'])
+            for team in group['teams']:
+                team_from_db = group_from_db.teams.get(pk=team['id'])
+                self.assertEquals(team_from_db.name, team['name'])
+                self.assertEquals(team_from_db.position, team['position'])
+
+    def test_ranking_first_phase(self):
+        self.results_helper.generate_first_phase_results(partial=True)
+        response = self.client.get('/tournaments/rankings/')
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        list_of_groups = response.data
+        for group in list_of_groups:
+            group_from_db = Group.objects.get(pk=group['id'])
+            self.assertEquals(group_from_db.letter, group['letter'])
+            for team in group['teams']:
+                team_from_db = group_from_db.teams.get(pk=team['id'])
+                self.assertEquals(team_from_db.name, team['name'])
+                self.assertEquals(team_from_db.position, team['position'])
+
+    def test_ranking_second_phase(self):
+        self.results_helper.generate_second_phase_results()
+        response = self.client.get('/tournaments/rankings/')
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        list_of_teams = response.data
+        for team in list_of_teams:
+            team_from_db = Team.objects.get(pk=team['id'])
+            self.assertEquals(team_from_db.name, team['name'])
+            self.assertEquals(team_from_db.position, team['position'])
+
+    def test_ranking_semi_final_phase(self):
+        self.results_helper.generate_semifinal_phase_results()
+        response = self.client.get('/tournaments/rankings/')
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        list_of_teams = response.data
+        for team in list_of_teams:
+            team_from_db = Team.objects.get(pk=team['id'])
+            self.assertEquals(team_from_db.name, team['name'])
+            self.assertEquals(team_from_db.position, team['position'])
+
+    def test_ranking_final_phase(self):
+        self.results_helper.generate_final_phase_results()
+        response = self.client.get('/tournaments/rankings/')
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        list_of_teams = response.data
+        for team in list_of_teams:
+            team_from_db = Team.objects.get(pk=team['id'])
+            self.assertEquals(team_from_db.name, team['name'])
+            self.assertEquals(team_from_db.position, team['position'])
