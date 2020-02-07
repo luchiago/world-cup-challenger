@@ -158,3 +158,7 @@ class RankingViewTest(TestCase):
             team_from_db = Team.objects.get(pk=team['id'])
             self.assertEquals(team_from_db.name, team['name'])
             self.assertEquals(team_from_db.position, team['position'])
+
+    def test_ranking_without_tournament(self):
+        response = self.client.get('/tournaments/rankings/')
+        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
