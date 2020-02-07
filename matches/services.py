@@ -68,8 +68,8 @@ class CreateMatchService:
         return list_winners
 
     def permute_teams(self, first_teams, second_teams):
-        self.create_match(first_teams[0], second_teams[1])
-        self.create_match(first_teams[1], second_teams[0])
+        self.create_match([first_teams[0], second_teams[1]])
+        self.create_match([first_teams[1], second_teams[0]])
 
     def create_second_phase_matches(self):
         groups = self.tournament.groups.all()
@@ -136,11 +136,19 @@ class MatchResultsService:
         if not has_not_played_matches:
             if self.tournament.phase != Tournament.FINAL:
                 self.tournament.phase += 1
-                self.tournament.save()
-            else:
-                raise Exception('The tournament has finished')
+                self.create_next_phase_matches(self.tournament)
+            self.tournament.save()
 
-    def check_match_winner(self, away_team, home_team, result):
+    def create_next_phase_matches(self, tournament):
+        creator = CreateMatchService(tournament)
+        if tournament.phase == Tournament.SECOND_PHASE:
+            creator.create_second_phase_matches()
+        elif tournament.phase == Tournament.SEMI_FINAL:
+            creator.create_semi_final_matches()
+        elif tournament.phase == Tournament.FINAL:
+            creator.create_final_matches()
+
+    def check_match_winner(self, match, away_team, home_team, result):
         if result['away_goals'] > result['home_goals']:
             away_team.points += 3
         if result['away_goals'] < result['home_goals']:
