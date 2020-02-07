@@ -151,8 +151,10 @@ class MatchResultsService:
     def check_match_winner(self, match, away_team, home_team, result):
         if result['away_goals'] > result['home_goals']:
             away_team.points += 3
+            match.winner = away_team
         if result['away_goals'] < result['home_goals']:
             home_team.points += 3
+            match.winner = home_team
         if result['away_goals'] == result['home_goals']:
             if self.tournament.phase != Tournament.FIRST_PHASE:
                 raise Exception('Draw is not allowed')
@@ -160,6 +162,7 @@ class MatchResultsService:
             home_team.points += 1
         home_team.save()
         away_team.save()
+        match.save()
 
     def update_team_position_in_group(self, team):
         group = Group.objects.get(pk=team.group.id)
@@ -189,8 +192,8 @@ class MatchResultsService:
             match.away_team.goals += received_match['away_goals']
             match.home_team.goals += received_match['home_goals']
             match.played = True
-            match.save()
             self.check_match_winner(
+                match,
                 match.away_team,
                 match.home_team,
                 received_match)
