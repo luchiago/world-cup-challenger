@@ -28,6 +28,13 @@ class Match(models.Model):
         on_delete=models.CASCADE)
     away_team_goals = models.IntegerField(default=0)
     home_team_goals = models.IntegerField(default=0)
+    winner = models.ForeignKey(
+        Team,
+        related_name='winner',
+        on_delete=models.CASCADE,
+        default=None,
+        null=True
+    )
     played = models.BooleanField(default=False)
     phase = models.IntegerField(choices=PHASE_CHOICES, default=None, null=True)
     tournament = models.ForeignKey(
