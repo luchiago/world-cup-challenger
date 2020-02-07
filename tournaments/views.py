@@ -6,7 +6,7 @@ from matches.services import MatchService
 
 from .models import Tournament
 from .serializer import TournamentSerializer
-from .services import TournamentService
+from .services import RankingService, TournamentService
 
 
 @api_view(['GET'])
@@ -35,3 +35,12 @@ def tournament_matches_list(request):
         return Response(status=status.HTTP_404_NOT_FOUND)
     matches = MatchService(current_tournament).perform()
     return Response(data=matches, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def tournament_ranking(request):
+    current_tournament = Tournament.objects.last()
+    if not current_tournament:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    ranking = RankingService(current_tournament).perform()
+    return Response(data=ranking, status=status.HTTP_200_OK)
