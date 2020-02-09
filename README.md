@@ -19,7 +19,7 @@ If not, check this [tutorial](https://docs.docker.com/compose/install/) for inst
 After the complete installation, you can build the project with this command at the root of the project
 
 ```shell
-docker-compose --build
+docker build .
 ```
 
 Warning: This project uses PostgreSQL, so you may have to turn off your local instance of postgresql
